@@ -14,8 +14,10 @@ enum Match {
 }
 
 struct MatchMarkers: View {
+    // MARK: Data In
     let matches: [Match]
     
+    // MARK: - body
     var body: some View {
         HStack {
             VStack {
