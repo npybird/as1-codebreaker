@@ -10,9 +10,14 @@ import Foundation
 
 struct Code {
     var kind: Kind
-    var pegs: [Peg] = Array(repeating: Code.missing, count: 4)
+    var pegs: [Peg]
     
-    static let missing: Peg = .clear
+    static let missing: Peg = ""
+    
+    init(kind: Kind, pegCount: Int) {
+        self.kind = kind
+        self.pegs = Array(repeating: Code.missing, count: pegCount)
+    }
     
     enum Kind: Equatable {
         case master
@@ -28,7 +33,7 @@ struct Code {
     }
     
     mutating func reset() {
-        pegs = Array(repeating: Code.missing, count: 4)
+        pegs = Array(repeating: Code.missing, count: pegs.count)
     }
     
     var matches: [Match] {
@@ -39,7 +44,6 @@ struct Code {
     }
     
     func match(against otherCode: Code) -> [Match] {
-//        var results: [Match] = Array(repeating: .nomatch, count: pegs.count)
         var pegsToMatch = otherCode.pegs
         
         let backwardsExactMatches = pegs.indices.reversed().map { index in
@@ -60,23 +64,5 @@ struct Code {
                 return exactMatches[index]
             }
         }
-        
-//        for index in pegs.indices.reversed() {
-//            if pegsToMatch[index] == pegs[index] {
-//                results[index] = .exact
-//                pegsToMatch.remove(at: index)
-//            }
-//        }
-        
-//        for index in pegs.indices {
-//            if results[index] != .exact {
-//                if let matchIndex = pegsToMatch.firstIndex(of: pegs[index]) {
-//                    results[index] = .inexact
-//                    pegsToMatch.remove(at: matchIndex)
-//                }
-//            }
-//        }
-        
-//        return results
     }
 }

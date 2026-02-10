@@ -21,18 +21,22 @@ struct MatchMarkers: View {
     var body: some View {
         HStack {
             VStack {
-                matchMaker(peg: 0)
-                matchMaker(peg: 1)
+                matchMarker(peg: 0)
+                matchMarker(peg: 1)
             }
             VStack {
-                matchMaker(peg: 2)
-                matchMaker(peg: 3)
+                matchMarker(peg: 2)
+                matchMarker(peg: 3)
+            }
+            VStack {
+                matchMarker(peg: 4)
+                matchMarker(peg: 5)
             }
         }
     }
     
     @ViewBuilder    // ไม่ต้องใส่ return
-    func matchMaker(peg: Int) -> some View {
+    func matchMarker(peg: Int) -> some View {
         let exactCount: Int = matches.count { $0 == .exact }        // $0 = ไม่กำหนดชื่อของ parameter ที่ส่งมา
         let foundCount: Int = matches.count { $0 != .nomatch }
         

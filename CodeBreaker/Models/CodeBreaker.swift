@@ -5,22 +5,39 @@
 //  Created by นายนัชชานนท์ โปษยาอนุวัตร์ on 21/1/2569 BE.
 //
 
-import SwiftUI
+//import SwiftUI
 
-typealias Peg = Color
+typealias Peg = String
 
 //let emoji String = "🥵"
 
 struct CodeBreaker {
-    var masterCode: Code = Code(kind: .master)
-    var guess: Code = Code(kind: .guess, pegs: [Code.missing, Code.missing, Code.missing, Code.missing])
+    var masterCode: Code
+    var guess: Code
     var attempts: [Code] = []
+
+    let emojiSet: EmojiSet
+    let pegCount: Int
+
+//    let pegChoices: [Peg] = [.red, .green, .yellow, .blue, .brown, .purple]
+    var pegChoices: [Peg] {
+        emojiSet.pegs
+    }
     
-    let pegChoices: [Peg] = [.red, .green, .yellow, .blue, .brown]
-    
-    init() {
+    init(pegCount: Int, emojiSet: EmojiSet) {
+        self.pegCount = pegCount
+        self.emojiSet = emojiSet
+        
+        self.masterCode = Code(kind: .master, pegCount: pegCount)
+        self.guess = Code(kind: .guess, pegCount: pegCount)
+
         masterCode.randomize(from: pegChoices)
         print(masterCode.pegs)
+    }
+
+    init(emojiSet: EmojiSet) {
+        let random = Int.random(in: 3...6)
+        self.init(pegCount: random, emojiSet: emojiSet)
     }
     
     var isOver: Bool {
@@ -40,10 +57,20 @@ struct CodeBreaker {
     
     mutating func attemptGuess() {
         var attempt = guess
-        attempt.kind = .attempt(guess.match(against: masterCode))
-        attempts.append(attempt)
+        if attempts.contains(where: { $0.pegs == attempt.pegs }) || attempt.pegs.contains(Code.missing) {
+            return
+        } else {
+            attempt.kind = .attempt(guess.match(against: masterCode))
+            attempts.append(attempt)
+            guess.reset()
+        }
+    }
+    
+    mutating func resetGame() {
+        attempts.removeAll()
         guess.reset()
-        
+        masterCode.randomize(from: pegChoices)
+        print(masterCode.pegs)
     }
     
     mutating func setGuessPeg(_ peg: Peg, at index: Int) {
@@ -51,4 +78,30 @@ struct CodeBreaker {
     }
 }
 
+enum EmojiSet: String, CaseIterable, Identifiable {
+    case animals
+    case faces
+    case food
+
+    var id: String { rawValue }
+
+    var name: String {
+        switch self {
+        case .animals: return "Animals 🐶"
+        case .faces: return "Faces 😀"
+        case .food: return "Food 🍎"
+        }
+    }
+
+    var pegs: [String] {
+        switch self {
+        case .animals:
+            return ["🐶","🐱","🐼","🦊","🐸","🐵"]
+        case .faces:
+            return ["😀","😂","🥹","😡","😴","😎"]
+        case .food:
+            return ["🍎","🍌","🍇","🍔","🍕","🍩"]
+        }
+    }
+}
 
